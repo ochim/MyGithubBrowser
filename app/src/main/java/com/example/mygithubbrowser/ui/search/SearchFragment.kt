@@ -27,7 +27,6 @@ import com.example.mygithubbrowser.ui.common.RepoListAdapter
 import com.example.mygithubbrowser.ui.common.RetryCallback
 import com.example.mygithubbrowser.util.autoCleared
 import com.google.android.material.snackbar.Snackbar
-import timber.log.Timber
 import javax.inject.Inject
 
 class SearchFragment : Fragment(), Injectable {
@@ -71,8 +70,9 @@ class SearchFragment : Fragment(), Injectable {
             appExecutors = appExecutors,
             showFullName = true
         ) { repo ->
-            Timber.d(repo.name)
-            findNavController().navigate(R.id.repoFragment, null)
+            findNavController().navigate(
+                SearchFragmentDirections.showRepo(repo.owner.login, repo.name)
+            )
         }
         binding.query = searchViewModel.query
         binding.repoList.adapter = rvAdapter

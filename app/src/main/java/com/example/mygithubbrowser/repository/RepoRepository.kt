@@ -9,6 +9,7 @@ import com.example.mygithubbrowser.api.RepoSearchResponse
 import com.example.mygithubbrowser.db.GithubDb
 import com.example.mygithubbrowser.db.RepoDao
 import com.example.mygithubbrowser.util.AbsentLiveData
+import com.example.mygithubbrowser.vo.Contributor
 import com.example.mygithubbrowser.vo.Repo
 import com.example.mygithubbrowser.vo.RepoSearchResult
 import com.example.mygithubbrowser.vo.Resource
@@ -22,6 +23,57 @@ class RepoRepository @Inject constructor(
     private val repoDao: RepoDao,
     private val githubService: GithubService
 ) {
+    fun loadRepo(owner: String, name: String): LiveData<Resource<Repo>> {
+        return object : NetworkBoundResource<Repo, Repo>(appExecutors) {
+            override fun saveCallResult(item: Repo) {
+                repoDao.insert(item)
+            }
+
+            override fun shouldFetch(data: Repo?) = data == null
+
+            override fun loadFromDb() = repoDao.load(
+                ownerLogin = owner,
+                name = name
+            )
+
+            override fun createCall() = githubService.getRepo(
+                owner = owner,
+                name = name
+            )
+        }.asLiveData()
+    }
+
+    fun loadContributors(owner: String, name: String): LiveData<Resource<List<Contributor>>> {
+        return object : NetworkBoundResource<List<Contributor>, List<Contributor>>(appExecutors) {
+            override fun saveCallResult(item: List<Contributor>) {
+                item.forEach {
+                    it.repoName = name
+                    it.repoOwner = owner
+                }
+                db.runInTransaction {
+                    repoDao.createRepoIfNotExists(
+                        Repo(
+                            id = Repo.UNKNOWN_ID,
+                            name = name,
+                            fullName = "$owner/$name",
+                            description = "",
+                            owner = Repo.Owner(owner, null),
+                            stars = 0
+                        )
+                    )
+                    repoDao.insertContributors(item)
+                }
+            }
+
+            override fun shouldFetch(data: List<Contributor>?): Boolean {
+                return data == null || data.isEmpty()
+            }
+
+            override fun loadFromDb() = repoDao.loadContributors(owner, name)
+
+            override fun createCall() = githubService.getContributors(owner, name)
+        }.asLiveData()
+    }
 
     fun searchNextPage(query: String): LiveData<Resource<Boolean>> {
         val fetchNextSearchPageTask = FetchNextSearchPageTask(
