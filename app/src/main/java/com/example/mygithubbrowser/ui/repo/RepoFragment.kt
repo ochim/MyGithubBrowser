@@ -82,7 +82,10 @@ class RepoFragment : Fragment(), Injectable {
         })
 
         val adapter = ContributorAdapter(dataBindingComponent, appExecutors) {
-                contributor, imageView ->
+                contributor ->
+            contributor.htmlUrl?.let {
+                findNavController().navigate(RepoFragmentDirections.browse(it))
+            }
         }
         this.adapter = adapter
         binding.contributorList.adapter = adapter

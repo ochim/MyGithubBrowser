@@ -2,7 +2,6 @@ package com.example.mygithubbrowser.ui.repo
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
@@ -15,7 +14,7 @@ import com.example.mygithubbrowser.vo.Contributor
 class ContributorAdapter(
     private val dataBindingComponent: DataBindingComponent,
     appExecutors: AppExecutors,
-    private val callback: ((Contributor, ImageView) -> Unit)?
+    private val callback: ((Contributor) -> Unit)?
 ) : DataBoundListAdapter<Contributor, ContributorItemBinding>(
     appExecutors = appExecutors,
     diffCallback = object : DiffUtil.ItemCallback<Contributor>() {
@@ -41,7 +40,7 @@ class ContributorAdapter(
             )
         binding.root.setOnClickListener {
             binding.contributor?.let {
-                callback?.invoke(it, binding.imageView)
+                callback?.invoke(it)
             }
         }
         return binding

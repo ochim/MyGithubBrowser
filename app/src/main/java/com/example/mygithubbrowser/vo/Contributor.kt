@@ -20,7 +20,9 @@ data class Contributor(
     @field:SerializedName("contributions")
     val contributions: Int,
     @field:SerializedName("avatar_url")
-    val avatarUrl: String?
+    val avatarUrl: String?,
+    @field:SerializedName("html_url")
+    val htmlUrl: String?
 ) {
 
     // does not show up in the response but set in post processing.

@@ -34,7 +34,7 @@ abstract class RepoDao {
 
     @Query(
         """
-        SELECT login, avatarUrl, repoName, repoOwner, contributions FROM contributor
+        SELECT login, avatarUrl, repoName, repoOwner, contributions, htmlUrl FROM contributor
         WHERE repoName = :name AND repoOwner = :owner
         ORDER BY contributions DESC"""
     )
