@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
@@ -73,6 +74,12 @@ class RepoFragment : Fragment(), Injectable {
         repoViewModel.setId(params.owner, params.name)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.repo = repoViewModel.repo
+        binding.name.setOnClickListener({
+            repoViewModel.repo.value?.data?.htmlUrl?.let {
+                Toast.makeText(requireActivity(), it, Toast.LENGTH_SHORT).show()
+            }
+
+        })
 
         val adapter = ContributorAdapter(dataBindingComponent, appExecutors) {
                 contributor, imageView ->
