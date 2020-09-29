@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/searchFragment">
 
     <fragment
@@ -20,6 +21,18 @@
             app:argType="string" />
         <argument
             android:name="name"
+            app:argType="string" />
+        <action
+            android:id="@+id/browse"
+            app:destination="@id/browseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/browseFragment"
+        android:name="com.example.mygithubbrowser.ui.browse.BrowseFragment"
+        android:label="BrowseFragment"
+        tools:layout="@layout/browse_fragment" >
+        <argument
+            android:name="url"
             app:argType="string" />
     </fragment>
 </navigation>
